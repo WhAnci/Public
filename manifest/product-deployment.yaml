@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: skills-product-rep
+  namespace: whanci
+  labels:
+    app: product
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: product
+  template:
+    metadata:
+      labels:
+        app: product
+    spec:
+      tolerations:
+        - key: "workload"
+          operator: "Equal"
+          value: "application"
+          effect: "NoSchedule"
+      containers:
+        - name: skills-product-rep
+          image: 586639730662.dkr.ecr.ap-northeast-2.amazonaws.com/skills-product-rep:v1.7.4
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - secretRef:
+                name: wh-skills-secret
+      imagePullSecrets:
+        - name: ecr-registry
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-svc
+  namespace: whanci
+  labels:
+    app: product
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 8080
+  selector:
+    app: product

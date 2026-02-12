@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: whanci
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: external-secrets-sa
+  namespace: whanci
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::586639730662:role/external-secrets-role
